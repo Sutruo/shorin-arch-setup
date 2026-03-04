@@ -173,7 +173,7 @@ fi
 # if [ ! -f /usr/local/bin/gnome-terminal ] || [ -L /usr/local/bin/gnome-terminal ]; then
 #   exe ln -sf /usr/bin/kitty /usr/local/bin/gnome-terminal
 # fi
-sudo -u "$TARGET_USER" -- gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal kitty
+sudo -u "$TARGET_USER" dbus-run-session gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal kitty
 
 # Nautilus Nvidia/Input Fix
 configure_nautilus_user
