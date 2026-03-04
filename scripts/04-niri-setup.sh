@@ -168,7 +168,11 @@ exe as_user paru -S --noconfirm --needed xdg-terminal-exec
 if grep -q "kitty" "$HOME_DIR/.config/xdg-terminals.list"; then
   echo 'kitty.desktop' >> "$HOME_DIR/.config/xdg-terminals.list"
 fi
-as_user gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal kitty
+
+# if [ ! -f /usr/local/bin/gnome-terminal ] || [ -L /usr/local/bin/gnome-terminal ]; then
+#   exe ln -sf /usr/bin/kitty /usr/local/bin/gnome-terminal
+# fi
+sudo -u "$TARGET_USER" gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal kitty
 
 # Nautilus Nvidia/Input Fix
 configure_nautilus_user
