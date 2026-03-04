@@ -93,7 +93,7 @@ select_desktop() {
         "Shorin-DMS-Niri |shorindms"
         "Shorin-DMS-Niri-git ${H_YELLOW}(Recommended)${NC} |shorindmsgit"
         "Shorin-DMS-Hyprland-Scrolling |hyprniri"
-        "KDE-Plasma |kde"
+        "KDE-Plasma ${H_YELLOW}(Recommended)${NC} |kde"
         "GNOME |gnome"
         "Quickshell: End4--illogical-impulse (Hyprland)|end4"
         "Quickshell: DMS--DankMaterialShell (Niri or Hyprland)|dms"
