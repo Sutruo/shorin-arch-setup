@@ -152,7 +152,7 @@ fi
 # ==============================================================================
 section "Config" "dms autostart"
 
-DMS_AUTOSTART_LINK="$HOME_DIR/.config/systemd/user/graphical-session.target.wants/dms.service"
+DMS_AUTOSTART_LINK="$HOME_DIR/.config/systemd/user/niri.service.wants/dms.service"
 DMS_NIRI_CONFIG_FILE="$HOME_DIR/.config/niri/config.kdl"
 DMS_HYPR_CONFIG_FILE="$HOME_DIR/.config/hypr/hyprland.conf"
 
