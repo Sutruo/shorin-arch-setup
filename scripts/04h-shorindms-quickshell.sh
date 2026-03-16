@@ -47,7 +47,7 @@ AUR_HELPER="paru"
 section "Shorin DMS" "Core Components"
 log "Installing core shell components..."
 
-CORE_PKGS="quickshell dms-shell-bin niri xwayland-satellite kitty xdg-desktop-portal-gnome nwg-look cava cliphist wl-clipboard dgop dsearch-bin qt5-multimedia polkit-gnome satty mpv cups-pk-helper kimageformats"
+CORE_PKGS="quickshell-git dms-shell-bin niri xwayland-satellite kitty xdg-desktop-portal-gnome nwg-look cava cliphist wl-clipboard dgop dsearch-bin qt5-multimedia polkit-gnome satty mpv cups-pk-helper kimageformats"
 echo "$CORE_PKGS" >> "$VERIFY_LIST"
 exe as_user "$AUR_HELPER" -S --noconfirm --needed $CORE_PKGS
 
