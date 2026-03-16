@@ -511,7 +511,11 @@ force_copy() {
 # 使用方法: check_dm_conflict
 # 结果: 设置全局变量 $SKIP_DM (true/false)
 check_dm_conflict() {
-    local KNOWN_DMS=("gdm" "sddm" "lightdm" "lxdm" "slim" "xorg-xdm" "ly" "greetd" "plasma-login-manager")
+    local KNOWN_DMS=(
+        "cdm" "console-tdm" "emptty" "lemurs" "lidm" "loginx" "ly" "nodm" "tbsm"
+        "entrance-git" "gdm" "lightdm" "lxdm" "plasma-login-manager" "sddm"
+        "slim" "xorg-xdm" "greetd"
+    )
     SKIP_DM=false
     local DM_FOUND=""
     
