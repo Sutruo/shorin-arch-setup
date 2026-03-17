@@ -36,7 +36,7 @@ function 滚
 	sysup 
 end
 function raw
-	command ~/.config/scripts/random-anime-wallpaper.sh $argv
+	command ~/.local/bin/random-anime-wallpaper-dms $argv
 end
 
 function 安装
