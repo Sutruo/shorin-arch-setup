@@ -278,7 +278,7 @@ if pacman -Qi virt-manager &>/dev/null && ! systemd-detect-virt -q; then
   # 1. 安装完整依赖
   # iptables-nft 和 dnsmasq 是默认 NAT 网络必须的
   log "Installing QEMU/KVM dependencies..."
-  pacman -S --noconfirm --needed qemu-full virt-manager swtpm dnsmasq 
+  pacman -S --noconfirm --needed qemu-full virt-manager swtpm dnsmasq virt-viewer
 
   # 2. 添加用户组 (需要重新登录生效)
   log "Adding $TARGET_USER to libvirt group..."
