@@ -593,20 +593,17 @@ setup_ly() {
     log "Installing ly display manager..."
     exe pacman -S --noconfirm --needed ly
     
-    # 如果之前折腾过 greetd，把它禁用掉防止冲突
-    systemctl disable greetd.service 2>/dev/null | true
+    # # 配置 ly (非破坏性修改 config.ini)
+    # log "Configuring /etc/ly/config.ini for Matrix animation..."
+    # local LY_CONF="/etc/ly/config.ini"
     
-    # 配置 ly (非破坏性修改 config.ini)
-    log "Configuring /etc/ly/config.ini for Matrix animation..."
-    local LY_CONF="/etc/ly/config.ini"
-    
-    if [[ -f "$LY_CONF" ]]; then
-        # 使用 sed 精准替换：
-        # 1. 将注释掉的或现有的 animation = none 替换为 animation = matrix
-        sed -i 's/^[#[:space:]]*animation[[:space:]]*=.*/animation = matrix/' "$LY_CONF"
-    else
-        log "Warning: $LY_CONF not found! Please check ly installation."
-    fi
+    # if [[ -f "$LY_CONF" ]]; then
+    #     # 使用 sed 精准替换：
+    #     # 1. 将注释掉的或现有的 animation = none 替换为 animation = matrix
+    #     sed -i 's/^[#[:space:]]*animation[[:space:]]*=.*/animation = matrix/' "$LY_CONF"
+    # else
+    #     log "Warning: $LY_CONF not found! Please check ly installation."
+    # fi
     
     # 启用服务
     log "Enabling ly service..."
