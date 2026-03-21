@@ -42,7 +42,7 @@ check_dm_conflict
 section "Step 1/5" "Plasma Core"
 
 log "Installing KDE Plasma Meta & Apps..."
-KDE_PKGS="plasma-meta konsole dolphin kate firefox qt6-multimedia-ffmpeg pipewire-jack sddm"
+KDE_PKGS="plasma-meta konsole dolphin kate firefox qt6-multimedia-ffmpeg pipewire-jack plasma-login-manager"
 
 # 注入 Verify 列表
 echo "$KDE_PKGS" >> "$VERIFY_LIST"

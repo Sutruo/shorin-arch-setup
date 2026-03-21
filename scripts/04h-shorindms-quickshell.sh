@@ -95,7 +95,7 @@ exe pacman -S --noconfirm --needed $FM_PKGS1
 exe as_user "$AUR_HELPER" -S --noconfirm --needed $FM_PKGS2
 
 log "Installing terminal utilities..."
-TERM_PKGS="xdg-terminal-exec fuzzel wf-recorder wl-screenrec-git ttf-jetbrains-maple-mono-nf-xx-xx eza zoxide starship jq fish libnotify timg imv cava imagemagick wl-clipboard cliphist shorin-contrib-git"
+TERM_PKGS="xdg-terminal-exec bat fuzzel wf-recorder wl-screenrec-git ttf-jetbrains-maple-mono-nf-xx-xx eza zoxide starship jq fish libnotify timg imv cava imagemagick wl-clipboard cliphist shorin-contrib-git"
 
 echo "$TERM_PKGS" >> "$VERIFY_LIST"
 exe as_user "$AUR_HELPER" -S --noconfirm --needed $TERM_PKGS

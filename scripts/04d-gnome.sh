@@ -137,7 +137,7 @@ sudo -u "$TARGET_USER" bash <<EOF
     gsettings set \$SCHEMA show-desktop "['<Super>h']"
     gsettings set \$SCHEMA toggle-fullscreen "['<Alt><Super>f']"
     gsettings set \$SCHEMA toggle-maximized "['<Super>f']"
-    
+
     gsettings set \$SCHEMA maximize "[]"
     gsettings set \$SCHEMA minimize "[]"
     gsettings set \$SCHEMA unmaximize "[]"
@@ -146,12 +146,12 @@ sudo -u "$TARGET_USER" bash <<EOF
     gsettings set \$SCHEMA switch-to-workspace-right "['<Shift><Super>e']"
     gsettings set \$SCHEMA move-to-workspace-left "['<Control><Super>q']"
     gsettings set \$SCHEMA move-to-workspace-right "['<Control><Super>e']"
-    
+
     gsettings set \$SCHEMA switch-applications "['<Alt>Tab']"
     gsettings set \$SCHEMA switch-applications-backward "['<Shift><Alt>Tab']"
     gsettings set \$SCHEMA switch-group "['<Alt>grave']"
     gsettings set \$SCHEMA switch-group-backward "['<Shift><Alt>grave']"
-    
+
     gsettings set \$SCHEMA switch-input-source "[]"
     gsettings set \$SCHEMA switch-input-source-backward "[]"
 
@@ -160,7 +160,7 @@ sudo -u "$TARGET_USER" bash <<EOF
     gsettings set \$SCHEMA screenshot "['<Shift><Control><Super>a']"
     gsettings set \$SCHEMA screenshot-window "['<Control><Super>a']"
     gsettings set \$SCHEMA show-screenshot-ui "['<Alt><Super>a']"
-    
+
     gsettings set \$SCHEMA toggle-application-view "['<Super>g']"
     gsettings set \$SCHEMA toggle-quick-settings "['<Control><Super>s']"
     gsettings set \$SCHEMA toggle-message-tray "[]"
@@ -175,16 +175,16 @@ sudo -u "$TARGET_USER" bash <<EOF
         local name="\$2"
         local cmd="\$3"
         local bind="\$4"
-        
+
         local path="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom\$index/"
         local key_schema="org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:\$path"
-        
+
         gsettings set "\$key_schema" name "\$name"
         gsettings set "\$key_schema" command "\$cmd"
         gsettings set "\$key_schema" binding "\$bind"
         echo "\$path"
     }
-    
+
     # 重置列表以避免冲突
     gsettings set \$SCHEMA custom-keybindings "[]"
 
@@ -197,7 +197,7 @@ sudo -u "$TARGET_USER" bash <<EOF
 
     CUSTOM_LIST="['\$P0', '\$P1', '\$P2', '\$P3', '\$P4', '\$P5']"
     gsettings set \$SCHEMA custom-keybindings "\$CUSTOM_LIST"
-    
+
     echo "   ➜ Shortcuts synced successfully."
 EOF
 
@@ -246,7 +246,7 @@ sudo -u "$TARGET_USER" bash <<EOF
     enable_extension() {
         local uuid="\$1"
         local current_list=\$(gsettings get org.gnome.shell enabled-extensions)
-        
+
         if [[ "\$current_list" == *"\$uuid"* ]]; then
             echo "   -> Extension \$uuid already enabled."
         else
@@ -372,9 +372,9 @@ if command -v flatpak &>/dev/null; then
 fi
 
 log "Installing shell tools..."
-SHELL_TOOLS_PKGS="thefuck starship eza fish zoxide jq timg imagemagick shorin-contrib-git"
+SHELL_TOOLS_PKGS="thefuck starship eza fish zoxide jq timg imagemagick shorin-contrib-git bat"
 echo "$SHELL_TOOLS_PKGS" >> "$VERIFY_LIST"
-exe as_user paru -S --noconfirm --needed $SHELL_TOOLS_PKGS 
+exe as_user paru -S --noconfirm --needed $SHELL_TOOLS_PKGS
 
 as_user shorin link
 

@@ -47,3 +47,4 @@ alias reboot='systemctl reboot'
 alias poweroff='systemctl poweroff'
 alias suspend='systemctl suspend'
 
+alias cat='bat'

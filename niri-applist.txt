@@ -1,4 +1,5 @@
 # --- Standard Packages ---
+bat                                      # better cat 
 bazaar                                   # Gui store for flatpak software
 bluetui                                  # tui for bluetooth
 brightnessctl                            # Device brightness control
