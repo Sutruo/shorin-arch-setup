@@ -126,32 +126,26 @@ success "Kernel parameters updated."
 section "Step 2/7" "Sync Themes to System Directory"
 
 SOURCE_BASE="$PARENT_DIR/grub-themes"
-DEST_DIR="/boot/grub/themes"
+# 【核心改变】使用 Arch Linux 官方标准的主题存放目录
+DEST_DIR="/usr/share/grub/themes"
 
-# 绝对防线：如果之前遗留了软链接，直接斩杀，防止 $root 劫持灾难
-if [ -L "$DEST_DIR" ]; then
-    warn "Found symlink at $DEST_DIR. Removing to prevent GRUB \$root hijacking..."
-    exe rm -f "$DEST_DIR"
-fi
-
-# 建立真正的物理目录
+# 确保目标目录存在
 if [ ! -d "$DEST_DIR" ]; then
     exe mkdir -p "$DEST_DIR"
 fi
 
-# 执行物理拷贝
 if [ -d "$SOURCE_BASE" ]; then
-    log "Syncing repository themes to physical Btrfs directory ($DEST_DIR)..."
+    log "Syncing repository themes to $DEST_DIR..."
     for dir in "$SOURCE_BASE"/*; do
         if [ -d "$dir" ] && [ -f "$dir/theme.txt" ]; then
             THEME_BASENAME=$(basename "$dir")
             if [ ! -d "$DEST_DIR/$THEME_BASENAME" ]; then
-                log "Copying $THEME_BASENAME..."
+                log "Installing $THEME_BASENAME to system..."
                 exe cp -r "$dir" "$DEST_DIR/"
             fi
         fi
     done
-    success "Local themes strictly copied (no symlinks) to preserve Btrfs compatibility."
+    success "Local themes installed to $DEST_DIR."
 else
     warn "Directory 'grub-themes' not found in repo. Only online/existing themes available."
 fi
@@ -160,6 +154,7 @@ log "Scanning $DEST_DIR for available themes..."
 THEME_PATHS=()
 THEME_NAMES=()
 
+# 直接扫描这个干净的系统级目录，无需任何额外处理
 mapfile -t FOUND_DIRS < <(find "$DEST_DIR" -mindepth 1 -maxdepth 1 -type d | sort 2>/dev/null || true)
 
 for dir in "${FOUND_DIRS[@]:-}"; do
@@ -175,6 +170,8 @@ done
 if [ ${#THEME_NAMES[@]} -eq 0 ]; then
     log "No valid local theme folders found. Proceeding to online menu."
 fi
+
+
 # ------------------------------------------------------------------------------
 # 3. Select Theme (TUI Menu)
 # ------------------------------------------------------------------------------
