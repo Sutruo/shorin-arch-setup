@@ -93,6 +93,23 @@ EOF
                 sed -i "s|^#*GRUB_BTRFS_GBTRFS_SEARCH_DIRNAME=.*|GRUB_BTRFS_GBTRFS_SEARCH_DIRNAME=\"${BTRFS_BOOT_PATH}\"|" /etc/default/grub-btrfs/config
             fi
 
+
+            # ==================================================================
+            # 处理 GRUB 主题链接
+            # ==================================================================
+            if [ -d "${FOUND_ESP_GRUB}/themes" ]; then
+                log "Found themes in ESP. Creating symlink..."
+                
+                # 如果存在旧的真实目录或软链接，先清理掉
+                if [ -e "/boot/grub/themes" ] || [ -L "/boot/grub/themes" ]; then
+                    exe rm -rf /boot/grub/themes
+                fi
+                
+                # 创建指向 ESP 中主题的软链接
+                exe ln -sf "${FOUND_ESP_GRUB}/themes" /boot/grub/themes
+                success "Symlink created: /boot/grub/themes -> ${FOUND_ESP_GRUB}/themes"
+            fi
+
             # ==================================================================
             # 开启 GRUB 启动项记忆功能
             # ==================================================================
