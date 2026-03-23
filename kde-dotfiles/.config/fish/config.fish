@@ -26,7 +26,7 @@ function lt
 	command eza --icons --tree $argv
 end
 # grub
-abbr grub 'sudo grub-mkconfig -o /boot/grub/grub.cfg'
+abbr grub 'LANGUAGE=en_US.UTF-8 LANG=en_US.UTF-8 sudo grub-mkconfig -o /boot/grub/grub.cfg'
 # 小黄鸭补帧 需要steam安装正版小黄鸭
 abbr lsfg 'LSFG_PROCESS="miyu"'
 # fa运行fastfetch
