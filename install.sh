@@ -123,8 +123,8 @@ select_desktop() {
     echo ""
     
     # 3. 输入处理
-    echo -e "   ${DIM}Waiting for input (Timeout: 10 mins)...${NC}"
-    read -t 600 -p "$(echo -e "   ${H_YELLOW}Select [1-${#OPTIONS[@]}]: ${NC}")" choice
+    echo -e "   ${DIM}Waiting for input...${NC}"
+    read -p "$(echo -e "   ${H_YELLOW}Select [1-${#OPTIONS[@]}]: ${NC}")" choice
     
     if [ -z "$choice" ]; then
         echo -e "\n${H_RED}Timeout or no selection.${NC}"
