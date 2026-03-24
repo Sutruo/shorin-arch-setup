@@ -1,3 +1,8 @@
+可以查阅的文档：
+ArchWiki： https://wiki.archlinux.org/title/Main_page
+NoctaliaWiki： https://noctalia.dev/
+ShorinArch： https://shorin.xyz/wiki
+Shorin一键配置脚本： https://shorin.xyz/wiki/archsetup
 
 
 如果出现网络问题可以进行以下操作更换wifi后端：
@@ -18,8 +23,6 @@ super+G/O 切换overview（在overview的时候可以左键移动窗口，滚轮
 super+alt+A 截图（或者用printscreen键）
 super+alt+V 开关剪贴板
 super+V 切换浮动窗口
-suepr+N 切换浮动窗口聚焦
-
 super+H/L 左右切换聚焦
 super+U/i 上下切换工作区
 super+右键 调整窗口大小
@@ -27,33 +30,22 @@ super+左键 移动窗口
 super+滚轮 左右切换聚焦
 super+Shift+滚轮 上下切换工作区
 super+A/D 左右移动窗口（合并列）
-super+shift+F10 下载随机动漫壁纸
 
-有一些必要设置需要手动完成
-1. 【主题模板】
-Mod+f2或者在右上角打开设置中心。在“配色方案页面”激活“使用壁纸颜色”，然后在“配色方案-->模板”页面至少激活btop cava Fuzzel GTK kitty Niri Pywalfox。然后勾选“启用用户模板”。
 
-2.【overview壁纸】
-设置中心的“壁纸”页面激活“启用概览壁纸”。
+【必要设置】
+1.更换壁纸
+Mod+Alt+W打开壁纸切换器，切换一次壁纸，此时会自动生成所有的主题颜色。
 
-3.【主题颜色更随壁纸变化】【gtk主题和qt主题】
-Mod+Z或者程序启动菜单打开“GTK Settings（nwg-look）”，然后在“偏好设置”页面取消“~/.config/gtk-4.0/*”的勾选，接着在“组件”页面选择“adw-gtk3”主题后右下角应用。
-
-.选择“主题与配色”，点击auto，然后选择一个自己喜欢的配色方案。然后到该页面底端，点击“应用GTK配色”。然后打开GTK Setting软件，选择使用adw-gte3-dark。
-
-3.【Firefox颜色同步】
+2.Firefox颜色同步
 打开firefox之后进入扩展页面，我预装好了pywalfox扩展，点进pywalfox扩展的页面点击右上角的fetch。
 
-4.【vscode颜色同步】
-在vscode里安装DMS主题扩展，然后把主题改成DankShell，再重新更换一次壁纸。
-
 【关于文档管理器】
-有两个，一个是nautius（图标是蓝色柜子的那个）一个是thunar，主要用thunar。装两个是因为Niri的录屏依赖xdg-desktop-portal-gnome，而这个portal会依赖nautilus，装都装了，我就把nautius的功能都补全了，也不占什么硬盘资源。
+有两个，一个是nautilus（图标是蓝色柜子的那个）一个是thunar，主要用thunar。装两个是因为Niri的录屏依赖xdg-desktop-portal-gnome，而这个portal会依赖nautilus，装都装了，我就把nautius的功能都补全了，也不占什么硬盘资源。
 
-
-【输入法配置】
+【输入法】
 super+空格切换输入法。第一次使用输入法有可能无法使用，重启一下输入法可以解决。
 f4可以打开菜单。如果出现卡A的情况可以试试按右shift解决。
+使用fcitx5配置可以对输入法进行细节配置
 
 【实用命令】
 运行shorin命令可以看到所有可用的便利命令
@@ -73,9 +65,8 @@ btop：任务管理器
 yazi：文档管理器
 fastfetch：系统信息显示工具
 
-
 【详细按键教程】
-所有的键位都可以在.config/niri/dms/binds.kdl里找到
+所有的键位都可以在.config/niri/binds.kdl里找到
 
 【如果不想要了或者安装失败了可以回档】
 /usr/local/bin下有两个脚本可以用来回档到运行脚本之前的状态。
