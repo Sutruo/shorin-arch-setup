@@ -70,16 +70,16 @@ select_desktop() {
     fi
     
     local MENU_ITEMS=(
-        "No-Desktop|none"
+        "No_Desktop|none"
         "Random (Surprise Me!)|random"
         "" # 这些空行现在会被代码自动忽略
-        "Minimal Niri|minimalniri"
-        "Shorin Niri|shorinniri"
-        "Shorin Noctalia Niri|shorinnocniri"
-        "Shorin DMS Niri ${H_YELLOW}(Recommended)${NC}|shorindmsgit"
-        "Shorin DMS Hyprland Scrolling|hyprniri"
+        "Minimal_Niri|minimalniri"
+        "Shorin_Niri|shorinniri"
+        "Shorin_Noctalia_Niri|shorinnocniri"
+        "Shorin_DMS_Niri ${H_YELLOW}(Recommended)${NC}|shorindmsgit"
+        "Shorin_DMS_Hyprland_Scrolling|hyprniri"
         ""
-        "KDE Plasma ${H_YELLOW}(Recommended)${NC}|kde"
+        "KDE_Plasma ${H_YELLOW}(Recommended)${NC}|kde"
         "GNOME |gnome"
         ""
         "Quickshell: End4--illogical_impulse (Hyprland)|end4"
