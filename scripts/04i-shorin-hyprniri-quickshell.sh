@@ -81,7 +81,7 @@ if [[ ${#installed_pkgs[@]} -gt 0 ]]; then
 fi
 
 log "Installing Hyprland core components..."
-CORE_PKGS="vulkan-headers hyprland quickshell-git dms-shell-bin matugen cava cups-pk-helper kimageformats kitty adw-gtk-theme nwg-look breeze-cursors wl-clipboard cliphist"
+CORE_PKGS="vulkan-headers hyprland quickshell-git dms-shell-bin matugen cava cups-pk-helper kimageformats kitty adw-gtk-theme nwg-look breeze-cursors wl-clipboard cliphist dsearch"
 echo "$CORE_PKGS" >> "$VERIFY_LIST"
 exe as_user "$AUR_HELPER" -S --noconfirm --needed $CORE_PKGS
 
