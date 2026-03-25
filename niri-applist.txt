@@ -30,7 +30,7 @@ nwg-look                                 # GTK3 settings editor for Wayland
 pacman-contrib                           # pacman utilus
 swayidle                                 # Idle management daemon (Screen lock/suspend)
 swayosd                                  # On-Screen Display for Volume/Brightness
-swww                                     # Efficient wallpaper daemon for Wayland
+awww                                     # Efficient wallpaper daemon for Wayland
 ttf-jetbrains-mono-nerd                  # JetBrains Mono font (Nerd Font patched)
 waybar                                   # Highly customizable Wayland bar
 wlsunset                                 # take care of your eyes
@@ -48,5 +48,5 @@ AUR:python-pywalfox                      # Pywal support for Firefox
 AUR:ttf-jetbrains-maple-mono-nf-xx-xx    # Maple Mono NF font
 AUR:ttf-lxgw-wenkai-screen               # xia2 wu4 wen2 kai3 font
 AUR:waybar-niri-taskbar-git              # Waybar module: Niri Workspaces/Taskbar
-AUR:waypaper                             # GUI wallpaper setter (Frontend for swww)
+AUR:waypaper-git                         # GUI wallpaper setter (Frontend for swww)
 AUR:niri-sidebar-git                     # niri sidebar functions 
