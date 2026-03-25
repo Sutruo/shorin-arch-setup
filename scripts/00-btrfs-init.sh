@@ -97,7 +97,31 @@ if findmnt -n -o FSTYPE /home | grep -q "btrfs"; then
 else
     log "/home is not a separate Btrfs volume. Skipping."
 fi
+# ------------------------------------------------------------------------------
+# 2.5 Backup ESP (FAT32)
+# ------------------------------------------------------------------------------
+section "Safety Net" "Backing up ESP (FAT32)"
 
+VFAT_MOUNTS=$(findmnt -n -l -o TARGET -t vfat)
+
+if [ -n "$VFAT_MOUNTS" ]; then
+    log "Found FAT32 partitions. Creating backups in /var/backups/before-shorin-setup-esp..."
+    # 使用与快照描述完全一致的命名
+    BACKUP_BASE="/var/backups/before-shorin-setup-esp"
+    exe mkdir -p "$BACKUP_BASE"
+    
+    while read -r mountpoint; do
+        safe_name=$(echo "$mountpoint" | tr '/' '_')
+        log "Backing up $mountpoint to $BACKUP_BASE/esp${safe_name}/ ..."
+        
+        # rsync 备份
+        exe rsync -a --delete "$mountpoint/" "$BACKUP_BASE/esp${safe_name}/"
+    done <<< "$VFAT_MOUNTS"
+    
+    success "ESP partitions backed up safely."
+else
+    warn "No FAT32 partitions found. Skipping ESP backup."
+fi
 # ------------------------------------------------------------------------------
 # 3. Create Initial Safety Snapshots
 # ------------------------------------------------------------------------------

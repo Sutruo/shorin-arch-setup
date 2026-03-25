@@ -95,6 +95,53 @@ else
     echo -e "No 'home' snapper config found, skipping home restore."
 fi
 
+# ------------------------------------------------------------------------------
+# 4.5 Restore ESP (FAT32) from Snapshot Timeline
+# ------------------------------------------------------------------------------
+echo -e "${YELLOW}>>> Restoring ESP (FAT32) partitions from Snapshot Timeline...${NC}"
+
+# 1. 精准获取目标快照的 ID
+ROOT_SNAP_ID=$(snapper -c root list --columns number,description | grep "$TARGET_DESC" | tail -n 1 | awk '{print $1}')
+
+if [ -n "$ROOT_SNAP_ID" ]; then
+    # 2. 构建指向快照内部特定时间点的绝对路径 (使用新的目录名)
+    SNAP_BACKUP_BASE="/.snapshots/${ROOT_SNAP_ID}/snapshot/var/backups/before-shorin-setup-esp"
+    
+    if [ -d "$SNAP_BACKUP_BASE" ]; then
+        VFAT_MOUNTS=$(findmnt -n -l -o TARGET -t vfat)
+        
+        if [ -n "$VFAT_MOUNTS" ]; then
+            while read -r mountpoint; do
+                safe_name=$(echo "$mountpoint" | tr '/' '_')
+                SNAP_BACKUP_DIR="${SNAP_BACKUP_BASE}/esp${safe_name}/"
+                
+                if [ -d "$SNAP_BACKUP_DIR" ]; then
+                    echo -e "  Restoring ${YELLOW}$mountpoint${NC} from snapshot ID ${GREEN}$ROOT_SNAP_ID${NC}..."
+                    # 从快照内部拉取数据，覆盖当前物理 ESP 分区
+                    if rsync -a --delete "$SNAP_BACKUP_DIR" "$mountpoint/"; then
+                        echo -e "  ${GREEN}Success.${NC}"
+                    else
+                        echo -e "  ${RED}Failed to restore $mountpoint.${NC}"
+                    fi
+                else
+                    echo -e "  ${YELLOW}[WARN] Backup dir not found inside snapshot for $mountpoint. Skipping.${NC}"
+                fi
+            done <<< "$VFAT_MOUNTS"
+        fi
+    else
+        echo -e "${RED}  [SKIP] ESP backup base directory not found in snapshot (${SNAP_BACKUP_BASE}).${NC}"
+    fi
+else
+    echo -e "${RED}  [SKIP] Could not find root snapshot ID for ESP restore.${NC}"
+fi
+# 5. Reboot
+echo -e "${GREEN}System rollback successful.${NC}"
+echo -e "${YELLOW}Rebooting in 3 seconds...${NC}"
+sleep 3
+reboot
+
+
+
 # 5. Reboot
 echo -e "${GREEN}System rollback successful.${NC}"
 echo -e "${YELLOW}Rebooting in 3 seconds...${NC}"
