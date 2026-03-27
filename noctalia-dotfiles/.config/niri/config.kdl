@@ -6,12 +6,6 @@
 
 // 截图保存位置
 screenshot-path "~/Pictures/Screenshots/Niri-screenshots/%Y-%m-%d_%H-%M-%S.png"
-// 禁用热角
-gestures {
-    hot-corners {
-        off
-    }
-}
 // 环境变量
 
 environment {
