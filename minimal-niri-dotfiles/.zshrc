@@ -22,10 +22,9 @@ setopt APPEND_HISTORY
 setopt EXTENDED_HISTORY
 
 #语法检查和高亮
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 #开启tab上下左右选择补全
 zstyle ':completion:*' menu select
 autoload -Uz compinit
