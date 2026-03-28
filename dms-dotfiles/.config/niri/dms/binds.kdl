@@ -8,7 +8,6 @@ binds {
     // 显示快捷键教程
     Mod+Shift+Slash hotkey-overlay-title="快捷键教程 Keybind tutorial" { spawn "~/.config/niri/scripts/niri-binds"; }
 
-    // alt+tab切换窗口
     Mod+F1 hotkey-overlay-title="开关输入法 Toggle fcitx" {spawn-sh "pkill fcitx5 || fcitx5 ";}
     Mod+F5 hotkey-overlay-title="快速存档 Quick save" {spawn "quicksave";}
     Mod+F8 hotkey-overlay-title="快速读档 Quick load" {spawn "quickload";}
