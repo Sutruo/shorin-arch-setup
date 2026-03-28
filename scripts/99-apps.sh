@@ -73,18 +73,15 @@ fi
 
 echo ""
 echo -e "   Selected List: ${BOLD}$LIST_FILENAME${NC}"
-echo -e "   ${H_YELLOW}>>> Do you want to install common applications?${NC}"
-echo -e "   ${H_CYAN}    [ENTER] = Select packages${NC}"
-echo -e "   ${H_CYAN}    [N]     = Skip installation${NC}"
-echo -e "   ${H_YELLOW}    [Timeout 60s] = Auto-install ALL default packages (No FZF)${NC}"
+echo -e "   ${H_YELLOW}>>> Do you want to CUSTOMIZE the application installation?${NC}"
 echo ""
 
-read -t 60 -p "   Please select [Y/n]: " choice
+read -t 60 -p "   Please select[Y/n]: " choice
 READ_STATUS=$?
 
 SELECTED_RAW=""
 
-# Case 1: Timeout (Auto Install ALL)
+# Case 1: Timeout (Auto Install ALL - Default to N)
 if [ $READ_STATUS -ne 0 ]; then
     echo "" 
     warn "Timeout reached (60s). Auto-installing ALL applications from list..."
@@ -92,11 +89,11 @@ if [ $READ_STATUS -ne 0 ]; then
 
 # Case 2: User Input
 else
+    # Enter defaults to Y
     choice=${choice:-Y}
     if [[ "$choice" =~ ^[nN]$ ]]; then
-        warn "User skipped application installation."
-        trap - INT
-        exit 0
+        log "User chose to auto-install ALL applications without customization."
+        SELECTED_RAW=$(grep -vE "^\s*#|^\s*$" "$LIST_FILE" | sed -E 's/[[:space:]]+#/\t#/')
     else
         clear
         echo -e "\n  Loading application list..."
@@ -113,7 +110,7 @@ else
                 --delimiter=$'\t' \
                 --with-nth=1 \
                 --bind 'load:select-all' \
-                --bind 'ctrl-a:select-all,ctrl-d:deselect-all' \
+                --bind 'ctrl-a:select-all,ctrl-d:deselect-all,j:down,k:up' \
                 --info=inline \
                 --header="[TAB] TOGGLE | [ENTER] INSTALL | [CTRL-D] DE-ALL | [CTRL-A] SE-ALL" \
                 --preview "echo {} | cut -f2 -d$'\t' | sed 's/^# //'" \
@@ -129,7 +126,7 @@ else
         clear
         
         if [ -z "$SELECTED_RAW" ]; then
-            log "Skipping application installation (User cancelled selection)."
+            log "Skipping application installation (User cancelled selection in FZF)."
             trap - INT
             exit 0
         fi
@@ -167,7 +164,7 @@ done <<< "$SELECTED_RAW"
 info_kv "Scheduled" "Repo: ${#REPO_APPS[@]}" "AUR: ${#AUR_APPS[@]}" "Flatpak: ${#FLATPAK_APPS[@]}"
 
 # ------------------------------------------------------------------------------
-# [SETUP] GLOBAL SUDO CONFIGURATION
+#[SETUP] GLOBAL SUDO CONFIGURATION
 # ------------------------------------------------------------------------------
 if [ ${#REPO_APPS[@]} -gt 0 ] || [ ${#AUR_APPS[@]} -gt 0 ]; then
     log "Configuring temporary NOPASSWD for installation..."
