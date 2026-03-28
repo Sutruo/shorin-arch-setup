@@ -1,8 +1,9 @@
 #!/bin/bash
 
 export SHELL=$(command -v bash)
+
 # ==============================================================================
-# Shorin Arch Setup - Main Installer (v1.1)
+# Shorin Arch Setup - Main Installer (v1.2)
 # ==============================================================================
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -40,13 +41,12 @@ chmod +x "$SCRIPTS_DIR"/*.sh
 banner1() {
 cat << "EOF"
   ██████  ██   ██  ██████  ███████ ██ ███    ██
-  ██      ██   ██ ██    ██ ██   ██    ██ ██  ██
+  ██      ██   ██ ██    ██ ██   ██   ██ ██  ██
   ███████ ███████ ██    ██ ██████  ██ ██ ██  ██
        ██ ██   ██ ██    ██ ██   ██ ██ ██  ██ ██
   ██████  ██   ██  ██████  ██   ██ ██ ██   ████
 EOF
 }
-
 
 export SHORIN_BANNER_IDX=0
 
@@ -63,7 +63,6 @@ show_banner() {
 
 # --- Desktop Selection Menu (FZF Powered) ---
 select_desktop() {
-    # 确保 fzf 已安装
     if ! command -v fzf &> /dev/null; then
         echo -e "   ${DIM}Installing fzf for interactive menu...${NC}"
         pacman -Sy --noconfirm --needed fzf >/dev/null 2>&1
@@ -72,7 +71,7 @@ select_desktop() {
     local MENU_ITEMS=(
         "No_Desktop|none"
         "Surprise Me!|random"
-        "" # 这些空行现在会被代码自动忽略
+        ""
         "KDE_Plasma ${H_YELLOW}(Recommended)${NC}|kde"
         ""
         "Shorin_DMS_Niri ${H_YELLOW}(Recommended)${NC}|shorindmsgit"
@@ -94,7 +93,6 @@ select_desktop() {
         local fzf_list=()
         local idx=1
         for item in "${MENU_ITEMS[@]}"; do
-            # --- 核心修改：如果是空行，直接跳过 ---
             [[ -z "$item" ]] && continue
             
             local name="${item%%|*}"
@@ -109,7 +107,6 @@ select_desktop() {
             ((idx++))
         done
         
-        # 在传给 fzf 之前，再次用 sed 确保没有任何残留的空白行
         local selected
         selected=$(printf "%b\n" "${fzf_list[@]}" | sed '/^[[:space:]]*$/d' | fzf \
             --ansi \
@@ -118,14 +115,16 @@ select_desktop() {
             --info=hidden \
             --layout=reverse \
             --border="rounded" \
-            --header=" Choose your Desktop Environment (Use j/k to navigate, Enter to select)" \
+            --border-label="  Select Desktop Environment  " \
+            --border-label-pos=5 \
+            --color="marker:cyan,pointer:cyan,label:yellow" \
+            --header=" [J/K] Select | [Enter] confirm" \
             --pointer=">" \
             --bind 'j:down,k:up,ctrl-c:abort,esc:abort' \
         --height=~20)
         
         local fzf_status=$?
         
-        # 处理 Ctrl+C 退出
         if [ $fzf_status -eq 130 ]; then
             echo -e "\n   ${H_RED}>>> Installation aborted by user.${NC}"
             exit 130
@@ -136,11 +135,10 @@ select_desktop() {
         export DESKTOP_ENV="$(echo "$selected" | awk -F'\t' '{print $2}')"
         local selected_name="$(echo "$selected" | awk -F'\t' '{print $3}')"
         
-        # --- Random 抽奖逻辑 ---
         if [ "$DESKTOP_ENV" == "random" ]; then
             local POOL=()
             for item in "${MENU_ITEMS[@]}"; do
-                [[ -z "$item" ]] && continue # 抽奖池也要过滤空行
+                [[ -z "$item" ]] && continue
                 local oid="${item##*|}"
                 if [[ "$oid" != "none" && "$oid" != "random" ]]; then
                     POOL+=("$item")
@@ -163,15 +161,80 @@ select_desktop() {
         fi
     done
 }
+
+# --- Optional Modules Selection Menu (FZF Powered) ---
+select_optional_modules() {
+    local OPTIONAL_MENU=(
+        "Dualboot Setup|02a-dualboot-fix.sh"
+        "GPU Drivers|03b-gpu-driver.sh"
+        "Grub Themes|07-grub-theme.sh"
+        "Common Apps|99-apps.sh"
+    )
+    
+    show_banner
+    
+    local fzf_list=()
+    for item in "${OPTIONAL_MENU[@]}"; do
+        local name="${item%%|*}"
+        local val="${item##*|}"
+        fzf_list+=("  ${name}\t${val}")
+    done
+    
+    # 核心修复：引入 --expect=ctrl-x,enter 来拦截按键动作
+    local selected_raw
+    selected_raw=$(printf "%b\n" "${fzf_list[@]}" | fzf \
+        --multi \
+        --delimiter='\t' \
+        --with-nth=1 \
+        --layout=reverse \
+        --border="rounded" \
+        --border-label="  Select Optional Modules  " \
+        --border-label-pos=5 \
+        --color="marker:cyan,pointer:cyan,label:yellow" \
+        --header=" [TAB]: Toggle | [CTRL-X]: Skip All | [ENTER]: Confirm " \
+        --pointer=">" \
+        --expect=ctrl-x,enter \
+        --bind 'start:select-all,ctrl-a:select-all,ctrl-d:deselect-all,ctrl-c:abort,esc:abort,j:down,k:up' \
+    --height=~20)
+    
+    local fzf_status=$?
+    if [ $fzf_status -eq 130 ]; then
+        echo -e "\n   ${H_RED}>>> Installation aborted by user.${NC}"
+        exit 130
+    fi
+    
+    OPTIONAL_MODULES=()
+    
+    if [ -n "$selected_raw" ]; then
+        # 解析 FZF 输出：第一行是按下的键，后面是选中的内容
+        local key
+        key=$(head -n 1 <<< "$selected_raw")
+        local selected_items
+        selected_items=$(sed '1d' <<< "$selected_raw")
+
+        # 完美解决“回车默认选中光标项”的问题：用户直接按 Ctrl-X 即可退出并清空
+        if [[ "$key" == "ctrl-x" ]]; then
+            log "Skipping all optional modules..."
+            sleep 0.5
+        else
+            if [ -n "$selected_items" ]; then
+                # 利用 awk 过滤掉空行，防止产生空元素
+                mapfile -t OPTIONAL_MODULES < <(echo "$selected_items" | awk -F'\t' '{if ($2 != "") print $2}')
+            fi
+        fi
+    fi
+}
+
 sys_dashboard() {
     echo -e "${H_BLUE}╔════ SYSTEM DIAGNOSTICS ══════════════════════════════╗${NC}"
     echo -e "${H_BLUE}║${NC} ${BOLD}Kernel${NC}   : $(uname -r)"
     echo -e "${H_BLUE}║${NC} ${BOLD}User${NC}     : $(whoami)"
     echo -e "${H_BLUE}║${NC} ${BOLD}Desktop${NC}  : ${H_CYAN}${DESKTOP_ENV^^}${NC}"
+    echo -e "${H_BLUE}║${NC} ${BOLD}Modules${NC}  : ${#OPTIONAL_MODULES[@]} optional module(s) selected"
     
     if [ "$CN_MIRROR" == "1" ]; then
         echo -e "${H_BLUE}║${NC} ${BOLD}Network${NC}  : ${H_YELLOW}CN Optimized (Manual)${NC}"
-        elif [ "$DEBUG" == "1" ]; then
+    elif [ "$DEBUG" == "1" ]; then
         echo -e "${H_BLUE}║${NC} ${BOLD}Network${NC}  : ${H_RED}DEBUG FORCE (CN Mode)${NC}"
     else
         echo -e "${H_BLUE}║${NC} ${BOLD}Network${NC}  : Global Default"
@@ -188,63 +251,38 @@ sys_dashboard() {
 # --- Main Execution ---
 
 select_desktop
+select_optional_modules
 clear
 show_banner
 sys_dashboard
 
-# Dynamic Module List
-BASE_MODULES=(
+MANDATORY_MODULES=(
     "00-btrfs-init.sh"
     "01-base.sh"
     "02-musthave.sh"
-    "02a-dualboot-fix.sh"
     "03-user.sh"
-    "03b-gpu-driver.sh"
     "03c-snapshot-before-desktop.sh"
+    "05-verify-desktop.sh"
 )
 
+ALL_MODULES=("${MANDATORY_MODULES[@]}" "${OPTIONAL_MODULES[@]}")
+
 case "$DESKTOP_ENV" in
-    shorinniri)
-        BASE_MODULES+=("04-niri-setup.sh")
-    ;;
-    minimalniri)
-        BASE_MODULES+=("04j-minimal-niri.sh")
-    ;;
-    kde)
-        BASE_MODULES+=("04b-kdeplasma-setup.sh")
-    ;;
-    end4)
-        BASE_MODULES+=("04e-illogical-impulse-end4-quickshell.sh")
-    ;;
-    dms)
-        BASE_MODULES+=("04c-dms-quickshell.sh")
-    ;;
-    shorindmsgit)
-        BASE_MODULES+=("04h-shorindms-quickshell.sh")
-        export SHORIN_DMS_GIT=1
-    ;;
-    hyprniri)
-        BASE_MODULES+=("04i-shorin-hyprniri-quickshell.sh")
-    ;;
-    shorinnocniri)
-        BASE_MODULES+=("04k-shorin-noctalia-quickshell.sh")
-    ;;
-    caelestia)
-        BASE_MODULES+=("04g-caelestia-quickshell.sh")
-    ;;
-    gnome)
-        BASE_MODULES+=("04d-gnome.sh")
-    ;;
-    none)
-        log "Skipping Desktop Environment installation."
-    ;;
-    *)
-        warn "Unknown selection, skipping desktop setup."
-    ;;
+    shorinniri)    ALL_MODULES+=("04-niri-setup.sh") ;;
+    minimalniri)   ALL_MODULES+=("04j-minimal-niri.sh") ;;
+    kde)           ALL_MODULES+=("04b-kdeplasma-setup.sh") ;;
+    end4)          ALL_MODULES+=("04e-illogical-impulse-end4-quickshell.sh") ;;
+    dms)           ALL_MODULES+=("04c-dms-quickshell.sh") ;;
+    shorindmsgit)  ALL_MODULES+=("04h-shorindms-quickshell.sh"); export SHORIN_DMS_GIT=1 ;;
+    hyprniri)      ALL_MODULES+=("04i-shorin-hyprniri-quickshell.sh") ;;
+    shorinnocniri) ALL_MODULES+=("04k-shorin-noctalia-quickshell.sh") ;;
+    caelestia)     ALL_MODULES+=("04g-caelestia-quickshell.sh") ;;
+    gnome)         ALL_MODULES+=("04d-gnome.sh") ;;
+    none)          log "Skipping Desktop Environment installation." ;;
+    *)             warn "Unknown selection, skipping desktop setup." ;;
 esac
 
-BASE_MODULES+=("05-verify-desktop.sh" "07-grub-theme.sh" "99-apps.sh")
-MODULES=("${BASE_MODULES[@]}")
+mapfile -t MODULES < <(printf "%s\n" "${ALL_MODULES[@]}" | sort -u)
 
 if [ ! -f "$STATE_FILE" ]; then touch "$STATE_FILE"; fi
 
@@ -257,12 +295,10 @@ sleep 0.5
 # --- Reflector Mirror Update (State Aware) ---
 section "Pre-Flight" "Mirrorlist Optimization"
 
-# [MODIFIED] Check if already done
 if grep -q "^REFLECTOR_DONE$" "$STATE_FILE"; then
     echo -e "   ${H_GREEN}✔${NC} Mirrorlist previously optimized."
     echo -e "   ${DIM}   Skipping Reflector steps (Resume Mode)...${NC}"
 else
-    # --- Start Reflector Logic ---
     log "Checking Reflector..."
     exe pacman -S --noconfirm --needed reflector
     
@@ -278,7 +314,7 @@ else
         echo -e "${H_YELLOW}╚══════════════════════════════════════════════════════════════════╝${NC}"
         echo ""
         
-        read -t 60 -p "$(echo -e "   ${H_CYAN}Run Reflector? [y/N] (Default No in 60s): ${NC}")" choice
+        read -t 60 -p "$(echo -e "   ${H_CYAN}Run Reflector?[y/N] (Default No in 60s): ${NC}")" choice
         if [ $? -ne 0 ]; then echo ""; fi
         choice=${choice:-N}
         
@@ -309,14 +345,11 @@ else
         fi
         success "Mirrorlist optimized."
     fi
-    # --- End Reflector Logic ---
     
-    # [MODIFIED] Record success so we don't ask again
     echo "REFLECTOR_DONE" >> "$STATE_FILE"
 fi
 
 # ---- update keyring-----
-
 section "Pre-Flight" "Update Keyring"
 
 exe pacman -Sy
@@ -335,6 +368,8 @@ fi
 
 # --- Module Loop ---
 for module in "${MODULES[@]}"; do
+    [[ -z "$module" ]] && continue
+    
     CURRENT_STEP=$((CURRENT_STEP + 1))
     script_path="$SCRIPTS_DIR/$module"
     
@@ -343,7 +378,6 @@ for module in "${MODULES[@]}"; do
         continue
     fi
     
-    # Checkpoint Logic: Auto-skip if in state file
     if grep -q "^${module}$" "$STATE_FILE"; then
         echo -e "   ${H_GREEN}✔${NC} Module ${BOLD}${module}${NC} already completed."
         echo -e "   ${DIM}   Skipping... (Delete .install_progress to force run)${NC}"
@@ -356,16 +390,14 @@ for module in "${MODULES[@]}"; do
     exit_code=$?
     
     if [ $exit_code -eq 0 ]; then
-        # Only record success
         echo "$module" >> "$STATE_FILE"
         success "Module $module completed."
-        elif [ $exit_code -eq 130 ]; then
+    elif [ $exit_code -eq 130 ]; then
         echo ""
         warn "Script interrupted by user (Ctrl+C)."
         log "Exiting without rollback. You can resume later."
         exit 130
     else
-        # Failure logic: do NOT write to STATE_FILE
         write_log "FATAL" "Module $module failed with exit code $exit_code"
         error "Module execution failed."
         exit 1
@@ -377,7 +409,6 @@ done
 # ------------------------------------------------------------------------------
 section "Completion" "System Cleanup"
 
-# --- 1. Snapshot Cleanup Logic ---
 clean_intermediate_snapshots() {
     local config_name="$1"
     local start_marker="Before Shorin Setup"
@@ -393,7 +424,6 @@ clean_intermediate_snapshots() {
     
     log "Scanning junk snapshots in: $config_name..."
     
-    # 1. 获取起始点 ID
     local start_id
     start_id=$(snapper -c "$config_name" list --columns number,description | grep -F "$start_marker" | awk '{print $1}' | tail -n 1)
     
@@ -402,7 +432,6 @@ clean_intermediate_snapshots() {
         return
     fi
     
-    # 2. 解析白名单 (IDS_TO_KEEP)
     local IDS_TO_KEEP=()
     for marker in "${KEEP_MARKERS[@]}"; do
         local found_id
@@ -416,20 +445,16 @@ clean_intermediate_snapshots() {
     
     local snapshots_to_delete=()
     
-    # 3. 扫描并筛选需要删除的快照
     while IFS= read -r line; do
         local id
         local type
         
-        # Snapper 表格输出通常为: " 100 | pre    | ..."
-        # awk $1=number, $2=|, $3=type
         id=$(echo "$line" | awk '{print $1}')
         type=$(echo "$line" | awk '{print $3}')
         
         if [[ "$id" =~ ^[0-9]+$ ]]; then
             if [ "$id" -gt "$start_id" ]; then
                 
-                # --- 白名单检查 ---
                 local skip=false
                 for keep in "${IDS_TO_KEEP[@]}"; do
                     if [[ "$id" == "$keep" ]]; then
@@ -441,7 +466,6 @@ clean_intermediate_snapshots() {
                 if [ "$skip" = true ]; then
                     continue
                 fi
-                # -----------------
                 
                 if [[ "$type" == "pre" || "$type" == "post" ]]; then
                     snapshots_to_delete+=("$id")
@@ -450,7 +474,6 @@ clean_intermediate_snapshots() {
         fi
     done < <(snapper -c "$config_name" list --columns number,type)
     
-    # 4. 执行删除
     if [ ${#snapshots_to_delete[@]} -gt 0 ]; then
         log "Deleting ${#snapshots_to_delete[@]} junk snapshots in '$config_name'..."
         if exe snapper -c "$config_name" delete "${snapshots_to_delete[@]}"; then
@@ -460,33 +483,27 @@ clean_intermediate_snapshots() {
         log "No junk snapshots found in '$config_name'."
     fi
 }
-# --- 2. Execute Cleanup ---
+
 log "Cleaning Pacman/Yay cache..."
 exe pacman -Sc --noconfirm
 
 clean_intermediate_snapshots "root"
 clean_intermediate_snapshots "home"
 
-
-# Detect user ID 1000 or prompt manually
 DETECTED_USER=$(awk -F: '$3 == 1000 {print $1}' /etc/passwd)
 TARGET_USER="${DETECTED_USER:-$(read -p "Target user: " u && echo $u)}"
 HOME_DIR="/home/$TARGET_USER"
 
-#--- 清理无用的下载残留
 for dir in /var/cache/pacman/pkg/download-*/; do
-    # 检查目录是否存在
     if [ -d "$dir" ]; then
         echo "Found residual directory: $dir, cleaning up..."
         rm -rf "$dir"
     fi
 done
 
-# --- verify 配置残留清理 ---
 VERIFY_LIST="/tmp/shorin_install_verify.list"
 rm -f "$VERIFY_LIST"
 
-# --- 4. Final GRUB Update ---
 log "Regenerating final GRUB configuration..."
 exe env LANG=en_US.UTF-8 grub-mkconfig -o /boot/grub/grub.cfg
 
@@ -494,7 +511,7 @@ exe env LANG=en_US.UTF-8 grub-mkconfig -o /boot/grub/grub.cfg
 clear
 show_banner
 echo -e "${H_GREEN}╔══════════════════════════════════════════════════════╗${NC}"
-echo -e "${H_GREEN}║             INSTALLATION  COMPLETE                   ║${NC}"
+echo -e "${H_GREEN}║               INSTALLATION  COMPLETE                 ║${NC}"
 echo -e "${H_GREEN}╚══════════════════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -510,12 +527,13 @@ fi
 if [ -n "$FINAL_USER" ]; then
     FINAL_DOCS="/home/$FINAL_USER/Documents"
     mkdir -p "$FINAL_DOCS"
-    cp "$TEMP_LOG_FILE" "$FINAL_DOCS/log-shorin-arch-setup.txt"
-    chown -R "$FINAL_USER:$FINAL_USER" "$FINAL_DOCS"
-    echo -e "   ${H_BLUE}●${NC} Log Saved     : ${BOLD}$FINAL_DOCS/log-shorin-arch-setup.txt${NC}"
+    if [ -f "${TEMP_LOG_FILE:-/tmp/shorin.log}" ]; then
+        cp "${TEMP_LOG_FILE:-/tmp/shorin.log}" "$FINAL_DOCS/log-shorin-arch-setup.txt"
+        chown -R "$FINAL_USER:$FINAL_USER" "$FINAL_DOCS"
+        echo -e "   ${H_BLUE}●${NC} Log Saved     : ${BOLD}$FINAL_DOCS/log-shorin-arch-setup.txt${NC}"
+    fi
 fi
 
-# --- Reboot Countdown ---
 echo ""
 echo -e "${H_YELLOW}>>> System requires a REBOOT.${NC}"
 
