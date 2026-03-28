@@ -165,7 +165,7 @@ select_desktop() {
 # --- Optional Modules Selection Menu (FZF Powered) ---
 select_optional_modules() {
     local OPTIONAL_MENU=(
-        "Dualboot Setup|02a-dualboot-fix.sh"
+        "Windows/Linux Dualboot Setup|02a-dualboot-fix.sh"
         "GPU Drivers|03b-gpu-driver.sh"
         "Grub Themes|07-grub-theme.sh"
         "Common Apps|99-apps.sh"
