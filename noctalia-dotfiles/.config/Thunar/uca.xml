@@ -88,7 +88,7 @@ for line in sys.stdin:
 	<name>图片转png</name>
 	<submenu></submenu>
 	<unique-id>1769516013413116-2</unique-id>
-	<command>bash -c &apos;exec 1&gt;&gt;/tmp/img_err.log 2&gt;&amp;1; /usr/bin/notify-send &quot;图片转换&quot; &quot;正在后台处理 $# 张图片...&quot;; for f in &quot;$@&quot;; do /usr/bin/magick &quot;$f&quot; -delete 1--1 &quot;$(echo &quot;$f&quot; | sed &quot;s/\.[^.]*$//&quot;).png&quot;; done; /usr/bin/notify-send &quot;图片转换&quot; &quot;处理完成&quot;&apos; -- %F</command>
+	<command>bash -c &apos;exec 1&gt;&gt;/tmp/img_err.log 2&gt;&amp;1; /usr/bin/notify-send &quot;图片转换&quot; &quot;正在后台处理 $# 张图片...&quot;; for f in &quot;$@&quot;; do /usr/bin/magick -background none &quot;$f&quot; -delete 1--1 &quot;$(echo &quot;$f&quot; | sed &quot;s/\.[^.]*$//&quot;).png&quot;; done; /usr/bin/notify-send &quot;图片转换&quot; &quot;处理完成&quot;&apos; -- %F</command>
 	<description></description>
 	<range>*</range>
 	<patterns>*</patterns>
