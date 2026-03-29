@@ -1,5 +1,6 @@
 # --- Standard Packages ---
-gdu                                      # Disk Usage Analyzer
+gdu                                      # TUI Disk Usage Analyzer
+baobab                                   # GUI Disk Usage Analyzer
 mission-center                           # System Monitor (Task Manager style)
 gnome-disk-utility                       # Disk Management Utility (Disks)
 gnome-font-viewer                        # manage fonts easily
