@@ -8,7 +8,7 @@ background-opacity=0.88
 font-family= "JetBrains Maple Mono" 
 font-size = 15
 #取消关闭时的确认
-confirm-close-surface = false
+# confirm-close-surface = false
 #设置左右边距
 window-padding-x=10
 #设置上下边距
