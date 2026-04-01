@@ -1,6 +1,9 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-# --- Import Utilities ---
+# ==============================================================================
+# 04-dms-setup.sh - DMS Desktop (Refactored for AUR + shorindms CLI + Verify)
+# ==============================================================================
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PARENT_DIR="$(dirname "$SCRIPT_DIR")"
 
@@ -42,47 +45,55 @@ cleanup_sudo() {
 trap cleanup_sudo EXIT INT TERM
 
 # ==============================================================================
-# 核心安装逻辑：将依赖管理全部交给 AUR 包！
+# 核心安装逻辑：委托给 AUR 和 shorindms CLI
 # ==============================================================================
 AUR_HELPER="paru"
+CORE_PKG="shorin-dms-niri-git"
 section "Shorin DMS" "Installing Meta Environment"
 
-# 1. 只需要安装这一个包！PKGBUILD 会自动拉取那几百个依赖软件和配置文件模板
-log "Installing quickshell and core dependencies via AUR..."
-BASE_PACKAGES=(
-    "vulkan-headers"
-    "quickshell-git"
-    "xdg-desktop-portal-gnome"
-)
-echo "${BASE_PACKAGES[@]}" >> "$VERIFY_LIST"
-exe as_user "$AUR_HELPER" -S --noconfirm --needed "${BASE_PACKAGES[@]}"
-log "Installing shorin-dms-niri environment..."
-echo "shorin-dms-niri-git" >> "$VERIFY_LIST"
-exe as_user "$AUR_HELPER" -S --noconfirm --needed shorin-dms-niri-git
+# 1. 委托 AUR 助手安装大包
+log "Installing $CORE_PKG environment via AUR..."
+if ! as_user "$AUR_HELPER" -S --noconfirm --needed "$CORE_PKG"; then
+    error "Failed to install $CORE_PKG"
+    exit 1
+fi
 
-# 2. 调用 AUR 包自带的 CLI 工具进行全自动用户环境初始化 (包含了配置下发、GTK设置、图标隐藏等)
+# --- 动态生成 VERIFY_LIST ---
+log "Generating dynamic verification list from Pacman DB..."
+echo "$CORE_PKG" >> "$VERIFY_LIST"
+# 提取依赖并写入
+pacman -Qi "$CORE_PKG" | grep "^Depends On" | cut -d':' -f2- | tr -s ' ' '\n' | sed -e 's/[<>=].*//g' -e '/^$/d' -e '/None/d' >> "$VERIFY_LIST"
+log "Added $(wc -l < "$VERIFY_LIST") packages to $VERIFY_LIST."
+# -----------------------------
+
+# 2. 调用 shorindms 初始化环境
 log "Initializing User Dotfiles and Environment..."
 exe as_user shorindms init
-# ==============================================================================
 
-# --- Wallpapers & Static Resources (不属于包管理的静态大文件) ---
+# ==============================================================================
+# 静态资源部署
+# ==============================================================================
 section "Shorin DMS" "Wallpapers & Tutorials"
 
 log "Deploying wallpapers..."
 WALLPAPER_SOURCE_DIR="$PARENT_DIR/resources/Wallpapers"
 WALLPAPER_DIR="$HOME_DIR/Pictures/Wallpapers"
-as_user mkdir -p "$WALLPAPER_DIR"
-force_copy "$WALLPAPER_SOURCE_DIR/." "$WALLPAPER_DIR/"
-chown -R "$TARGET_USER:" "$WALLPAPER_DIR"
+if [ -d "$WALLPAPER_SOURCE_DIR" ]; then
+    as_user mkdir -p "$WALLPAPER_DIR"
+    force_copy "$WALLPAPER_SOURCE_DIR/." "$WALLPAPER_DIR/"
+    chown -R "$TARGET_USER:" "$WALLPAPER_DIR"
+fi
 
 log "Copying tutorial files..."
-force_copy "$PARENT_DIR/resources/必看-Shorin-DMS-Niri使用方法.txt" "$HOME_DIR"
-chown "$TARGET_USER:" "$HOME_DIR/必看-Shorin-DMS-Niri使用方法.txt"
+TUTORIAL_SRC="$PARENT_DIR/resources/必看-Shorin-DMS-Niri使用方法.txt"
+TUTORIAL_DEST="$HOME_DIR/必看-Shorin-DMS-Niri使用方法.txt"
+if [ -f "$TUTORIAL_SRC" ]; then
+    as_user cp "$TUTORIAL_SRC" "$TUTORIAL_DEST"
+fi
 
-# niri blur toggle 脚本
-curl -L shorin.xyz/niri-blur-toggle | as_user bash
-
-# --- Finalization & Auto-Login ---
+# ==============================================================================
+# Finalization & Auto-Login
+# ==============================================================================
 section "Final" "Auto-Login & Cleanup"
 rm -f "$SUDO_TEMP_FILE"
 
