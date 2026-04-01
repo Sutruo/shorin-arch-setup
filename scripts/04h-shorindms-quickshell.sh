@@ -133,6 +133,20 @@ THEME_PKGS="matugen adw-gtk-theme python-pywalfox firefox nwg-look"
 echo "$THEME_PKGS" >> "$VERIFY_LIST"
 exe as_user "$AUR_HELPER" -S --noconfirm --needed $THEME_PKGS
 
+#  GTK 4.0
+as_user mkdir -p "$HOME_DIR/.config/gtk-4.0"
+as_user touch "$HOME_DIR/.config/gtk-4.0/dank-colors.css"
+if ! grep -q "dank-colors.css" "$HOME_DIR/.config/gtk-4.0/gtk.css" 2>/dev/null; then
+    as_user bash -c "echo '@import url(\"dank-colors.css\");' >> '$HOME_DIR/.config/gtk-4.0/gtk.css'"
+fi
+
+#  GTK 3.0
+as_user mkdir -p "$HOME_DIR/.config/gtk-3.0"
+as_user touch "$HOME_DIR/.config/gtk-3.0/dank-colors.css"
+if ! grep -q "dank-colors.css" "$HOME_DIR/.config/gtk-3.0/gtk.css" 2>/dev/null; then
+    as_user bash -c "echo '@import url(\"dank-colors.css\");' >> '$HOME_DIR/.config/gtk-3.0/gtk.css'"
+fi
+
 log "Configuring Firefox Pywalfox policy..."
 POL_DIR="/etc/firefox/policies"
 exe mkdir -p "$POL_DIR"
