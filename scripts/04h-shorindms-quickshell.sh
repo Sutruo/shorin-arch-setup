@@ -13,7 +13,7 @@ fi
 
 check_root
 VERIFY_LIST="/tmp/shorin_install_verify.list"
-rm -f "$VERIFY_LIST" # 确保每次运行生成全新的订单
+rm -f "$VERIFY_LIST"
 
 # --- Identify User & DM Check ---
 log "Identifying target user..."
@@ -25,7 +25,6 @@ if [[ -z "$TARGET_USER" || ! -d "$HOME_DIR" ]]; then
 fi
 
 info_kv "Target User" "$TARGET_USER"
-
 check_dm_conflict
 
 # --- Temporary Sudo Privileges ---
@@ -42,100 +41,36 @@ cleanup_sudo() {
 }
 trap cleanup_sudo EXIT INT TERM
 
-# --- Installation: Core Components ---
+# ==============================================================================
+# 核心安装逻辑：将依赖管理全部交给 AUR 包！
+# ==============================================================================
 AUR_HELPER="paru"
-section "Shorin DMS" "Core Components"
-log "Installing core shell components..."
-CORE_PKGS="quickshell-git shorin-dms-niri-meta shorin-dms-niri-dotfiles-git"
+section "Shorin DMS" "Installing Meta Environment"
 
-echo "$CORE_PKGS" >> "$VERIFY_LIST"
-exe as_user "$AUR_HELPER" -S --noconfirm --needed $CORE_PKGS
+# 1. 只需要安装这一个包！PKGBUILD 会自动拉取那几百个依赖软件和配置文件模板
+log "Installing shorin-dms-niri environment..."
+echo "shorin-dms-niri-git" >> "$VERIFY_LIST"
+exe as_user "$AUR_HELPER" -S --noconfirm --needed shorin-dms-niri-git
 
-# --- Dotfiles & Wallpapers ---
-section "Shorin DMS" "Wallpapers"
+# 2. 调用 AUR 包自带的 CLI 工具进行全自动用户环境初始化 (包含了配置下发、GTK设置、图标隐藏等)
+log "Initializing User Dotfiles and Environment..."
+exe as_user shorindms init
+# ==============================================================================
+
+
+# --- Wallpapers & Static Resources (不属于包管理的静态大文件) ---
+section "Shorin DMS" "Wallpapers & Tutorials"
 
 log "Deploying wallpapers..."
 WALLPAPER_SOURCE_DIR="$PARENT_DIR/resources/Wallpapers"
 WALLPAPER_DIR="$HOME_DIR/Pictures/Wallpapers"
-chown -R "$TARGET_USER:" "$WALLPAPER_SOURCE_DIR"
 as_user mkdir -p "$WALLPAPER_DIR"
 force_copy "$WALLPAPER_SOURCE_DIR/." "$WALLPAPER_DIR/"
-
-# shorin-contrib
-as_user shorin link
-as_user shorindms init
-
-log "Configuring default terminal and templates..."
-# 默认终端处理
-if ! grep -q "kitty" "$HOME_DIR/.config/xdg-terminals.list"; then
-    echo 'kitty.desktop' >> "$HOME_DIR/.config/xdg-terminals.list"
-fi
-
-# if [ ! -f /usr/local/bin/gnome-terminal ] || [ -L /usr/local/bin/gnome-terminal ]; then
-#   exe ln -sf /usr/bin/kitty /usr/local/bin/gnome-terminal
-# fi
-sudo -u "$TARGET_USER" dbus-run-session gsettings set com.github.stunkymonkey.nautilus-open-any-terminal terminal kitty
-
-as_user mkdir -p "$HOME_DIR/Templates"
-as_user touch "$HOME_DIR/Templates/new" "$HOME_DIR/Templates/new.sh"
-as_user bash -c "echo '#!/usr/bin/env bash' >> '$HOME_DIR/Templates/new.sh'"
-chown -R "$TARGET_USER:" "$HOME_DIR/Templates"
-
-log "Applying Nautilus bugfixes and bookmarks..."
-configure_nautilus_user
-as_user sed -i "s/shorin/$TARGET_USER/g" "$HOME_DIR/.config/gtk-3.0/bookmarks"
-
-# --- Flatpak & Theme Integration ---
-section "Shorin DMS" "Flatpak & Theme Integration"
-
-if command -v flatpak &>/dev/null; then
-    log "Configuring Flatpak overrides and themes..."
-    echo "bazaar" >> "$VERIFY_LIST"
-    exe as_user "$AUR_HELPER" -S --noconfirm --needed bazaar
-    as_user flatpak override --user --filesystem=xdg-data/themes
-    as_user flatpak override --user --filesystem="$HOME_DIR/.themes"
-    as_user flatpak override --user --filesystem=xdg-config/gtk-4.0
-    as_user flatpak override --user --filesystem=xdg-config/gtk-3.0
-    as_user flatpak override --user --env=GTK_THEME=adw-gtk3-dark
-    as_user flatpak override --user --filesystem=xdg-config/fontconfig
-    as_user ln -sf /usr/share/themes "$HOME_DIR/.local/share/themes"
-fi
-
-# === update module ===
-if command -v kitty &>/dev/null; then
-    exe ln -sf /usr/bin/kitty /usr/local/bin/xterm
-fi
-
-log "Installing theme components and browser..."
-THEME_PKGS="matugen adw-gtk-theme python-pywalfox firefox nwg-look"
-echo "$THEME_PKGS" >> "$VERIFY_LIST"
-exe as_user "$AUR_HELPER" -S --noconfirm --needed $THEME_PKGS
-
-log "Configuring Firefox Pywalfox policy..."
-POL_DIR="/etc/firefox/policies"
-exe mkdir -p "$POL_DIR"
-cat << 'EOF' > "$POL_DIR/policies.json"
-{
-  "policies": {
-    "Extensions": {
-      "Install": [
-        "https://addons.mozilla.org/firefox/downloads/latest/pywalfox/latest.xpi",
-        "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
-      ]
-    }
-  }
-}
-EOF
-exe chmod 755 "$POL_DIR"
-exe chmod 644 "$POL_DIR/policies.json"
-
-# --- Desktop Cleanup & Tutorials ---
-section "Config" "Desktop Cleanup"
-log "Hiding unnecessary .desktop icons..."
-run_hide_desktop_file
+chown -R "$TARGET_USER:" "$WALLPAPER_DIR"
 
 log "Copying tutorial files..."
 force_copy "$PARENT_DIR/resources/必看-Shorin-DMS-Niri使用方法.txt" "$HOME_DIR"
+chown "$TARGET_USER:" "$HOME_DIR/必看-Shorin-DMS-Niri使用方法.txt"
 
 # niri blur toggle 脚本
 curl -L shorin.xyz/niri-blur-toggle | as_user bash
@@ -144,7 +79,6 @@ curl -L shorin.xyz/niri-blur-toggle | as_user bash
 section "Final" "Auto-Login & Cleanup"
 rm -f "$SUDO_TEMP_FILE"
 
-# 1. 清理旧的 TTY 自动登录残留（无论是否启用 greetd，旧版残留都应清除）
 log "Cleaning up legacy TTY autologin configs..."
 rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf 2>/dev/null
 
@@ -152,6 +86,7 @@ if [ "$SKIP_DM" = true ]; then
     log "Display Manager setup skipped (Conflict found or user opted out)."
     warn "You will need to start your session manually from the TTY."
 else
-    
     setup_ly
 fi
+
+success "Shorin DMS Niri Installation Complete!"
