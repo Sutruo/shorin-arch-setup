@@ -502,8 +502,6 @@ if [ -d "$DOTFILES_REPO/dotfiles" ]; then
   THEME="$HOME_DIR/.local/share/themes/adw-gtk3-dark/gtk-4.0"
   if [ -d "$GTK4" ]; then
       as_user rm -f "$GTK4/gtk.css" "$GTK4/gtk-dark.css"
-      as_user ln -sf "$THEME/gtk-dark.css" "$GTK4/gtk-dark.css"
-      as_user ln -sf "$THEME/gtk.css" "$GTK4/gtk.css"
   fi
   
   # Flatpak overrides
