@@ -436,14 +436,6 @@ if cp -rf "$PARENT_DIR/resources/firefox" "$MOZILLA_DIR/"; then
 fi
 section "Config" "clash tun"
 
-if command -v clash-verge; then 
-     /usr/bin/clash-verge-service &
-     sleep 3
-     clash-verge-service-uninstall || true
-     sleep 3
-     clash-verge-service-install || true
-fi
-
 # --- mangohud --- 
 section "Config" "MangoHud Configuration"
 if command -v mangohud &>/dev/null; then 
