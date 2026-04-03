@@ -99,6 +99,7 @@ hotkey-overlay {
 // 隐藏窗口标题栏
 prefer-no-csd
 
+// 自25.11版本起，niri的配置文件支持了拆分，每一条include都代表把已经拆分出去的配置文件嵌入进来。
 
 include "layout.kdl"
 include "animations.kdl"
