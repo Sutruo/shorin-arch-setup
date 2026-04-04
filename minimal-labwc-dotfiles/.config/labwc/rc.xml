@@ -28,8 +28,7 @@
       <popupTime>500</popupTime>
       <initial>1</initial>
       <names>
-        <name>1</name>
-        <name>2</name>
+        <name>1</name> <name>2</name>
         <name>3</name>
         <name>4</name>
         <name>5</name>
@@ -254,9 +253,10 @@
     <keybind key="W-F1">
       <action name="Execute" command="fcitx5 -r -d " />
     </keybind>
-    <keybind key="W-F2">
+        <keybind key="W-F2">
       <action name="Execute" command="sh -c 'pkill waybar || waybar'" />
     </keybind>
+
     <keybind key="W-F5">
       <action name="Execute" command="quicksave" />
     </keybind>
@@ -272,6 +272,35 @@
     
   </keyboard>
 
+
+  <!-- 鼠标绑定 -->
+  <mouse>
+    <!-- 引入默认的鼠标绑定，避免破坏原有的左键拖动窗口等基础功能 -->
+    <default />
+    <!-- 设置作用域为全局 (All)，无论鼠标停在桌面还是窗口上都生效 -->
+    <context name="All">
+      <!-- Super(W) + Shift(S) + 向上滚动(Up) -> 切换到左边（上一个）工作区 -->
+      <mousebind direction="W-S-Up" action="Scroll">
+        <action name="GoToDesktop" to="left" wrap="no" />
+      </mousebind>
+      <!-- Super(W) + Shift(S) + 向下滚动(Down) -> 切换到右边（下一个）工作区 -->
+      <mousebind direction="W-S-Down" action="Scroll">
+        <action name="GoToDesktop" to="right" wrap="no" />
+      </mousebind>
+      <mousebind direction="W-C-Up" action="Scroll">
+        <action name="SendToDesktop" to="left" follow="yes" wrap="no" />
+      </mousebind>
+      <mousebind direction="W-C-Down" action="Scroll">
+        <action name="SendToDesktop" to="right" follow="yes" wrap="no" />
+      </mousebind>
+      <mousebind direction="W-Up" action="Scroll">
+        <action name="PreviousWindow" />
+      </mousebind>
+      <mousebind direction="W-Down" action="Scroll">
+        <action name="NextWindow" />
+      </mousebind>
+    </context>
+  </mouse>
 
   <libinput>
     <!-- 针对传统鼠标的配置 -->
@@ -289,4 +318,32 @@
     </device>
   </libinput>
 
+    <windowRules>
+    <!-- 让浏览器的画中画模式默认悬浮，并置顶 -->
+    <windowRule title="Picture-in-Picture">
+      <action name="ToggleAlwaysOnTop" />
+      <action name="ToggleDecorations" />
+    </windowRule>
+    <windowRule title="画中画">
+      <action name="ToggleAlwaysOnTop" />
+      <action name="ToggleDecorations" />
+    </windowRule>
+
+    <!-- 让特定的应用（如文件选择框、计算器、设置窗口）默认居中浮动 -->
+    <windowRule identifier="*gcr-prompter*">
+      <action name="AutoPlace" policy="center" />
+    </windowRule>
+    <windowRule identifier="*polkit*">
+      <action name="AutoPlace" policy="center" />
+    </windowRule>
+  </windowRules>
+
+  <theme>
+    <!-- 设置标题栏字体和大小 -->
+    <font place="ActiveWindow">Sans 11</font>
+    <font place="InactiveWindow">Sans 11</font>
+    <font place="MenuItem">Sans 11</font>
+    <font place="OnScreenDisplay">Sans 12</font>
+  </theme>
+	
 </labwc_config>
