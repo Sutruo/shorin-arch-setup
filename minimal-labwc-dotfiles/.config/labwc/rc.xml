@@ -254,7 +254,39 @@
     <keybind key="W-F1">
       <action name="Execute" command="fcitx5 -r -d " />
     </keybind>
+    <keybind key="W-F2">
+      <action name="Execute" command="sh -c 'pkill waybar || waybar'" />
+    </keybind>
+    <keybind key="W-F5">
+      <action name="Execute" command="quicksave" />
+    </keybind>
+    <keybind key="W-F8">
+      <action name="Execute" command="quickload" />
+    </keybind>
+    <keybind key="W-F10">
+      <action name="Execute" command="waypaper --random" />
+    </keybind>
+    <keybind key="W-F12">
+      <action name="Execute" command="sh -c 'grim - | satty -f -'" />
+    </keybind>
     
   </keyboard>
+
+
+  <libinput>
+    <!-- 针对传统鼠标的配置 -->
+    <device category="non-touch">
+      <!-- 关闭鼠标加速（flat 表示保持匀速，没有加速度） -->
+      <accelProfile>flat</accelProfile>
+      <!-- 设置鼠标速度（范围从 -1.0 到 1.0，0.0 为默认速度，你可以自行调整） -->
+      <pointerSpeed>-0.1</pointerSpeed>
+    </device>
+
+    <!-- 针对笔记本触摸板的配置 -->
+    <device category="touchpad">
+      <!-- 开启触摸板自然滚动 -->
+      <naturalScroll>yes</naturalScroll>
+    </device>
+  </libinput>
 
 </labwc_config>
