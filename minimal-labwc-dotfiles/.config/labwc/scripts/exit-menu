@@ -1,22 +1,24 @@
 #!/usr/bin/env bash
 
-# 定义选项
-OPTIONS="取消 (Cancel)\n确定退出 (Yes, Exit)"
+# 定义带有图标的选项 (需要安装 Nerd Fonts 才能正确显示图标)
+OPTIONS="注销 (Logout)\n休眠 (Suspend)\n重启 (Reboot)\n关机 (Shutdown)\n取消 (Cancel)"
 
-# 使用 fuzzel 弹出选择框
-# --dmenu: 开启 dmenu 模式以读取管道输入
-# --prompt: 设置提示词
-# --lines 2: 因为只有两个选项，所以只显示 2 行
-# --width 30: 限制窗口宽度，让它看起来像个对话框
-CHOICE=$(printf "$OPTIONS" | fuzzel --dmenu --prompt "真的要退出 labwc 吗？ " --lines 2 --width 30)
+CHOICE=$(printf "$OPTIONS" | fuzzel --dmenu --prompt "电源菜单: " --lines 5 --width 20)
 
-# 根据用户的选择执行操作
 case "$CHOICE" in
-    "确定退出 (Yes, Exit)")
+    "注销 (Logout)")
         labwc --exit
         ;;
+    "休眠 (Suspend)")
+        systemctl suspend
+        ;;
+    "重启 (Reboot)")
+        systemctl reboot
+        ;;
+    "关机 (Shutdown)")
+        systemctl poweroff
+        ;;
     *)
-        # 选择了取消，或者按 Esc 键关闭了 fuzzel
         exit 0
         ;;
 esac
