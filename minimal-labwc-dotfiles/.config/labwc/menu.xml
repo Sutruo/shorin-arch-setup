@@ -65,8 +65,8 @@
     
     <separator />
     <!-- 电源与锁屏 -->
-    <item label="🔒 锁定屏幕"><action name="Execute" command="hyprlock -c ~/.config/labwc/hyprlock.conf"/></item>
-    <item label="⏻ 退出 / 电源"><action name="Execute" command="~/.config/labwc/scripts/exit-menu"/></item>
+    <item label="锁定屏幕"><action name="Execute" command="hyprlock -c ~/.config/labwc/hyprlock.conf"/></item>
+    <item label="电源菜单"><action name="Execute" command="~/.config/labwc/scripts/exit-menu"/></item>
 
   </menu>
 </openbox_menu>
