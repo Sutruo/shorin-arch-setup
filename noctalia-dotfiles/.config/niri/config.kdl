@@ -33,6 +33,8 @@ input {
     keyboard {
         xkb {
         }
+	repeat-delay 400
+	repeat-rate 50
     }
 
     touchpad {
@@ -48,8 +50,7 @@ input {
         // accel-profile "flat"
         // scroll-method "two-finger"
         // disabled-on-external-mouse
-	repeat-delay 400
-	repeat-rate 50
+
     }
 
     mouse {
