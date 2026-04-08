@@ -80,6 +80,7 @@ window-rule {
     match title="Steam 设置" 
     match title="另存为"
     match app-id="better_control.py"
+    match app-id="floating-mpv"
     open-floating true
 }
 // waybar命令中心模块
