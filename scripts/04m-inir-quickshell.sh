@@ -161,6 +161,8 @@ if ! grep -q '/usr/lib/xdg-desktop-portal-gnome' "$INIR_AUTOSTART_CONFIG"; then
     echo 'spawn-sh-at-startup "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri & /usr/lib/xdg-desktop-portal-gnome"' >> "$DMS_NIRI_CONFIG_FILE"
 fi
 
+run_hide_desktop_file
+
 # ==============================================================================
 #  Dispaly Manager
 # ==============================================================================
