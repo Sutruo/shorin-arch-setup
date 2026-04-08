@@ -165,7 +165,7 @@ curl -L shorin.xyz/niri-blur-toggle | as_user bash
 
 # --- Finalization & Auto-Login ---
 section "Final" "Auto-Login & Cleanup"
-rm -f "$SUDO_TEMP_FILE"
+
 
 # --- display manager setup ---
 log "Cleaning up legacy TTY autologin configs..."
@@ -178,3 +178,4 @@ else
     
     setup_ly
 fi
+

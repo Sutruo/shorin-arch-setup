@@ -204,7 +204,7 @@ force_copy "$PARENT_DIR/resources/必看-shoirn-hyprniri使用方法.txt" "$HOME
 
 # --- Finalization & Auto-Login ---
 section "Final" "Auto-Login & Cleanup"
-rm -f "$SUDO_TEMP_FILE"
+
 
 # 1. 清理旧的 TTY 自动登录残留（无论是否启用 greetd，旧版残留都应清除）
 log "Cleaning up legacy TTY autologin configs..."

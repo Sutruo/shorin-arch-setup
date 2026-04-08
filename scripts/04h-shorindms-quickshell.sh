@@ -124,5 +124,5 @@ if [ "$SKIP_DM" = true ]; then
 else
     setup_ly
 fi
-rm -f "$SUDO_TEMP_FILE"
+
 success "Shorin DMS Niri Installation Complete!"
