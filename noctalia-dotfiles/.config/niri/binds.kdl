@@ -9,7 +9,7 @@ binds {
     // 特殊功能
     Mod+F1 hotkey-overlay-title="开关输入法 Toggle fcitx" {spawn-sh "pkill fcitx5 || fcitx5 ";}
     Mod+F2 hotkey-overlay-title="设置 Settings" { spawn-sh "qs -c noctalia-shell ipc call settings toggle";}
-    Mod+F3 hotkey-overlay-title="录屏 Screen record" { spawn "shorin" "screenrec";}
+    Mod+F3 hotkey-overlay-title="录屏 Screen record" { spawn "shorin-screenrec-menu";}
     Mod+F5 hotkey-overlay-title="快速存档 Quick save" {spawn "quicksave";}
     Mod+F8 hotkey-overlay-title="快速读档 Quick load" {spawn "quickload";}
 
