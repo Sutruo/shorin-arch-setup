@@ -48,6 +48,8 @@ input {
         // accel-profile "flat"
         // scroll-method "two-finger"
         // disabled-on-external-mouse
+	repeat-delay 400
+	repeat-rate 50
     }
 
     mouse {

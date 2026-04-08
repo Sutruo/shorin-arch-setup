@@ -86,6 +86,7 @@ select_desktop() {
         "Quickshell: End4--illogical_impulse|end4"
         "Quickshell: DMS--DankMaterialShell|dms"
         "Quickshell: Caelestia|caelestia"
+        "Quickshell: iNiR|inir"
     )
     
     while true; do
@@ -274,6 +275,7 @@ case "$DESKTOP_ENV" in
     kde)           ALL_MODULES+=("04b-kdeplasma-setup.sh") ;;
     end4)          ALL_MODULES+=("04e-illogical-impulse-end4-quickshell.sh") ;;
     dms)           ALL_MODULES+=("04c-dms-quickshell.sh") ;;
+    inir)          ALL_MODULES+=("04m-inir-quickshell.sh") ;;
     shorindmsgit)  ALL_MODULES+=("04h-shorindms-quickshell.sh"); export SHORIN_DMS_GIT=1 ;;
     hyprniri)      ALL_MODULES+=("04i-shorin-hyprniri-quickshell.sh") ;;
     shorinnocniri) ALL_MODULES+=("04k-shorin-noctalia-quickshell.sh") ;;
