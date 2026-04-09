@@ -35,7 +35,7 @@ binds {
     // 锁屏
     Mod+Alt+L hotkey-overlay-title="锁屏 Lock screen" { spawn-sh "hyprlock -c ~/.config/niri/hyprlock.conf"; } 
     // 这是我自己的剪贴板程序，对应aur包shorinclip-git
-    Mod+Alt+V hotkey-overlay-title="剪贴板 Clipboard" {spawn-sh "footclient -a shorinclip shorinclip";} 
+    Mod+Alt+V hotkey-overlay-title="剪贴板 Clipboard" {spawn-sh "footclient -a cliphist-tui cliphist-tui";} 
     // 调节音量
     XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume +5||wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume -5||wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-"; }

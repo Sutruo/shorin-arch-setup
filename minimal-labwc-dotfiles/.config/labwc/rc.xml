@@ -226,7 +226,7 @@
       <action name="Execute" command="Thunar" />
     </keybind>
     <keybind key="W-A-v">
-      <action name="Execute" command="footclient shorinclip" />
+      <action name="Execute" command="footclient cliphist-tui" />
     </keybind>
     <keybind key="W-A-a">
       <action name="Execute" command="~/.config/labwc/scripts/screenshot select" />
