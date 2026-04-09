@@ -518,9 +518,12 @@ check_dm_conflict() {
     export SKIP_DM=false
     local DM_FOUND=""
     
+    echo -e "\n[DEBUG-1] 开始检测 pacman..."
+    
     for dm in "${KNOWN_DMS[@]}"; do
         if pacman -Q "$dm" &>/dev/null; then
             DM_FOUND="$dm"
+            echo "[DEBUG-2] pacman 查到了冲突的包: $dm"
             break
         fi
     done
@@ -528,21 +531,28 @@ check_dm_conflict() {
     if [ -n "$DM_FOUND" ]; then
         info_kv "Conflict" "${H_RED}$DM_FOUND${NC}"
         export SKIP_DM=true
+        echo "[DEBUG-3] 命中了冲突逻辑，SKIP_DM 已被设置为 true，因为找到了: $DM_FOUND"
     else
+        echo "[DEBUG-4] 没有找到任何冲突 DM，准备执行 read 命令..."
         
         if read -t 20 -p "$(echo -e "   ${H_CYAN}Enable Display Manager ? [Y/n] (Default Y): ${NC}")" choice </dev/tty; then
+            echo "[DEBUG-5] read 命令执行成功！捕获到的用户输入为: ->$choice<-"
             
             if [[ "$choice" =~ ^[[:space:]]*[Nn](o|O)?[[:space:]]*$ ]]; then
                 export SKIP_DM=true
+                echo "[DEBUG-6] 正则匹配到了 'N' 或 'n'，SKIP_DM 已被设置为 true"
             else
                 export SKIP_DM=false
+                echo "[DEBUG-7] 正则没有匹配到 N，执行默认逻辑，SKIP_DM 被设置为 false"
             fi
         else
-            
             echo " Y (Auto-default)"
             export SKIP_DM=false
+            echo "[DEBUG-8] read 命令失败或超时，自动默认，SKIP_DM 被设置为 false"
         fi
     fi
+    
+    echo -e "[DEBUG-FINAL] 函数即将退出时，SKIP_DM 的最终值是: $SKIP_DM \n"
 }
 
 # ==============================================================================
