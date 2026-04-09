@@ -119,9 +119,7 @@ section "Final" "Auto-Login & Cleanup"
 
 log "Cleaning up legacy TTY autologin configs..."
 
-if [ "$SKIP_DM" = true ]; then
-    warn "You will need to start your session manually from the TTY."
-else
+if [ "$SKIP_DM" = false ]; then
     setup_ly
 fi
 

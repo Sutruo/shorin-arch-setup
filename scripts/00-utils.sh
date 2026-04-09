@@ -596,7 +596,7 @@ EOF
 # 使用方法: setup_ly
 setup_ly() {
     log "Installing ly display manager..."
-    exe pacman -S --noconfirm --needed ly
+    exe paru -S --noconfirm --needed ly
     
     # # 配置 ly (非破坏性修改 config.ini)
     # log "Configuring /etc/ly/config.ini for Matrix animation..."
@@ -614,5 +614,5 @@ setup_ly() {
     log "Enabling ly service..."
     systemctl enable ly@tty1
     
-    success "ly display manager with Matrix animation has been successfully configured!"
+    success "ly display manager has been successfully configured!"
 }
