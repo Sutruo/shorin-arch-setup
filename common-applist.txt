@@ -2,7 +2,7 @@
 gdu                                      # TUI Disk Usage Analyzer
 baobab                                   # GUI Disk Usage Analyzer
 mission-center                           # System Monitor (Task Manager style)
-gnome-disk-utility                       # Disk Management Utility (Disks)
+gparted                                  # Disk Management Utility (Disks)
 gnome-font-viewer                        # manage fonts easily
 fcitx5-mozc                              # Japanese Input Method
 rime-wubi                                # wubi input method
@@ -38,7 +38,7 @@ AUR:lsfg-vk-bin                          # yellow duck frame generator
 AUR:mangojuice-bin                       # GUI for mangohud                
 AUR:video-downloader                     # Download youtube or bilibili videos
 AUR:visual-studio-code-bin               # vscode 
-AUR:pins-git			         # Manage .desktop
+AUR:pins-git			                 # Manage .desktop
 
 # --- Flatpak Packages ---       
 flatpak:com.github.wwmm.easyeffects      # Audio Effects for PipeWire 
