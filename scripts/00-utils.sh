@@ -515,7 +515,7 @@ check_dm_conflict() {
         "gdm" "lightdm" "lxdm" "plasma-login-manager" "sddm"
         "greetd"
     )
-    SKIP_DM=false
+    export SKIP_DM=false
     local DM_FOUND=""
     
     for dm in "${KNOWN_DMS[@]}"; do
@@ -527,20 +527,20 @@ check_dm_conflict() {
     
     if [ -n "$DM_FOUND" ]; then
         info_kv "Conflict" "${H_RED}$DM_FOUND${NC}"
-        SKIP_DM=true
+        export SKIP_DM=true
     else
         
         if read -t 20 -p "$(echo -e "   ${H_CYAN}Enable Display Manager ? [Y/n] (Default Y): ${NC}")" choice; then
             
             if [[ "$choice" =~ ^[[:space:]]*[Nn](o|O)?[[:space:]]*$ ]]; then
-                SKIP_DM=true
+                export SKIP_DM=true
             else
-                SKIP_DM=false
+                export SKIP_DM=false
             fi
         else
             
             echo " Y (Auto-default)"
-            SKIP_DM=false
+            export SKIP_DM=false
         fi
     fi
 }
