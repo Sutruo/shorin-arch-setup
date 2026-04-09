@@ -21,7 +21,7 @@ rm -f "$VERIFY_LIST"
 # --- Identify User & DM Check ---
 log "Identifying target user..."
 detect_target_user
-log "DM Check result $SKIP_DM"
+
 
 if [[ -z "$TARGET_USER" || ! -d "$HOME_DIR" ]]; then
     error "Target user invalid or home directory does not exist."
@@ -30,7 +30,7 @@ fi
 
 info_kv "Target User" "$TARGET_USER"
 check_dm_conflict
-
+log "DM Check result $SKIP_DM"
 # --- Temporary Sudo Privileges ---
 log "Granting temporary sudo privileges..."
 SUDO_TEMP_FILE="/etc/sudoers.d/99_shorin_installer_temp"
