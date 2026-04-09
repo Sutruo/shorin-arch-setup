@@ -405,6 +405,7 @@ run_hide_desktop_file() {
         "org.kde.kwrite.desktop"
         "org.freedesktop.MalcontentControl.desktop"
         "org.gnome.Nautilus.desktop"
+        "lstopo.desktop"
     )
     
     echo "正在隐藏不需要的桌面图标..."
